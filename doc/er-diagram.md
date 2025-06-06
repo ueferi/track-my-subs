@@ -9,8 +9,8 @@ erDiagram
 
 users {
   UUID id PK
-  TEXT email
-  TEXT password_digest
+  STRING email
+  STRING password_digest
   TIMESTAMP created_at
   TIMESTAMP updated_at
 }
@@ -18,10 +18,10 @@ users {
 subscriptions {
   UUID id PK
   UUID user_id FK
-  TEXT name
+  STRING name
   NUMERIC price
-  TEXT currency_code FK
-  TEXT billing_cycle
+  STRING currency_code FK
+  STRING billing_cycle
   DATE start_date
   DATE next_renewal_date
   INTEGER notify_before
@@ -35,29 +35,29 @@ notifications {
   UUID id PK
   UUID subscription_id FK
   TIMESTAMP sent_at
-  TEXT channel
+  STRING channel
   TIMESTAMP created_at
   TIMESTAMP updated_at
 }
 
 categories {
   INTEGER id PK
-  TEXT name
+  STRING name
   TIMESTAMP created_at
   TIMESTAMP updated_at
 }
 
 currencies {
-  TEXT code PK
-  TEXT name
+  STRING code PK
+  STRING name
   TIMESTAMP created_at
   TIMESTAMP updated_at
 }
 
 exchange_rates {
   UUID id PK
-  TEXT base_currency FK
-  TEXT target_currency FK
+  STRING base_currency FK
+  STRING target_currency FK
   NUMERIC rate
   DATE date
   TIMESTAMP created_at
