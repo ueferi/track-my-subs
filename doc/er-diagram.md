@@ -79,22 +79,22 @@ exchange_rates }o--|| currencies : "対象通貨"
 ```sql
 CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email TEXT UNIQUE NOT NULL,
-  password_digest TEXT NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_digest VARCHAR(255) NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT now(),
   updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE categories (
   id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
+  name VARCHAR(255) NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT now(),
   updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE currencies (
-  code TEXT PRIMARY KEY, -- 例: 'USD', 'JPY'
-  name TEXT NOT NULL,     -- 例: 'USドル', '日本円'
+  code VARCHAR(16) PRIMARY KEY, -- 例: 'USD', 'JPY'
+  name VARCHAR(32) NOT NULL,    -- 例: 'USドル', '日本円'
   created_at TIMESTAMP NOT NULL DEFAULT now(),
   updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
@@ -102,10 +102,10 @@ CREATE TABLE currencies (
 CREATE TABLE subscriptions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  name TEXT NOT NULL,
+  name VARCHAR(255) NOT NULL,
   price NUMERIC(10, 2) NOT NULL,
-  currency_code TEXT REFERENCES currencies(code),
-  billing_cycle TEXT NOT NULL, -- 例: 'monthly', 'yearly'
+  currency_code VARCHAR(16) REFERENCES currencies(code),
+  billing_cycle VARCHAR(32) NOT NULL, -- 例: 'monthly', 'yearly'
   start_date DATE NOT NULL,
   next_renewal_date DATE NOT NULL,
   notify_before INTEGER DEFAULT 7,
@@ -119,15 +119,15 @@ CREATE TABLE notifications (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   subscription_id UUID REFERENCES subscriptions(id) ON DELETE CASCADE,
   sent_at TIMESTAMP,
-  channel TEXT DEFAULT 'email', -- 他の通知方法に対応するための拡張性を考慮
+  channel VARCHAR(32) DEFAULT 'email', -- 他の通知方法に対応するための拡張性を考慮
   created_at TIMESTAMP NOT NULL DEFAULT now(),
   updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE exchange_rates (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  base_currency TEXT NOT NULL REFERENCES currencies(code),
-  target_currency TEXT NOT NULL REFERENCES currencies(code),
+  base_currency VARCHAR(16) NOT NULL REFERENCES currencies(code),
+  target_currency VARCHAR(16) NOT NULL REFERENCES currencies(code),
   rate NUMERIC(10, 4) NOT NULL,
   date DATE NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT now(),
