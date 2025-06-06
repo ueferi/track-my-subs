@@ -36,16 +36,22 @@ notifications {
   UUID subscription_id FK
   TIMESTAMP sent_at
   TEXT channel
+  TIMESTAMP created_at
+  TIMESTAMP updated_at
 }
 
 categories {
   INTEGER id PK
   TEXT name
+  TIMESTAMP created_at
+  TIMESTAMP updated_at
 }
 
 currencies {
   TEXT code PK
   TEXT name
+  TIMESTAMP created_at
+  TIMESTAMP updated_at
 }
 
 exchange_rates {
@@ -54,6 +60,8 @@ exchange_rates {
   TEXT target_currency FK
   NUMERIC rate
   DATE date
+  TIMESTAMP created_at
+  TIMESTAMP updated_at
 }
 
 users ||--o{ subscriptions : "所有する"
@@ -79,12 +87,16 @@ CREATE TABLE users (
 
 CREATE TABLE categories (
   id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL
+  name TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE currencies (
   code TEXT PRIMARY KEY, -- 例: 'USD', 'JPY'
-  name TEXT NOT NULL     -- 例: 'USドル', '日本円'
+  name TEXT NOT NULL,     -- 例: 'USドル', '日本円'
+  created_at TIMESTAMP NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE subscriptions (
@@ -107,7 +119,9 @@ CREATE TABLE notifications (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   subscription_id UUID REFERENCES subscriptions(id) ON DELETE CASCADE,
   sent_at TIMESTAMP,
-  channel TEXT DEFAULT 'email' -- 他の通知方法に対応するための拡張性を考慮
+  channel TEXT DEFAULT 'email', -- 他の通知方法に対応するための拡張性を考慮
+  created_at TIMESTAMP NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE exchange_rates (
@@ -115,6 +129,8 @@ CREATE TABLE exchange_rates (
   base_currency TEXT NOT NULL REFERENCES currencies(code),
   target_currency TEXT NOT NULL REFERENCES currencies(code),
   rate NUMERIC(10, 4) NOT NULL,
-  date DATE NOT NULL
+  date DATE NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 ```
