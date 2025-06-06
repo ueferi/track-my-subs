@@ -18,7 +18,7 @@ users {
 subscriptions {
   UUID id PK
   UUID user_id FK
-  TEXT service_name
+  TEXT name
   NUMERIC price
   TEXT currency_code FK
   TEXT billing_cycle
@@ -90,7 +90,7 @@ CREATE TABLE currencies (
 CREATE TABLE subscriptions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  service_name TEXT NOT NULL,
+  name TEXT NOT NULL,
   price NUMERIC(10, 2) NOT NULL,
   currency_code TEXT REFERENCES currencies(code),
   billing_cycle TEXT NOT NULL, -- 例: 'monthly', 'yearly'
