@@ -20,7 +20,7 @@ subscriptions {
   UUID user_id FK
   STRING name
   NUMERIC price
-  STRING currency_code FK
+  INTEGER currency_id FK
   STRING billing_cycle
   DATE start_date
   DATE next_renewal_date
@@ -48,7 +48,8 @@ categories {
 }
 
 currencies {
-  STRING code PK
+  INTEGER id PK
+  STRING code
   STRING name
   TIMESTAMP created_at
   TIMESTAMP updated_at
@@ -56,8 +57,8 @@ currencies {
 
 exchange_rates {
   UUID id PK
-  STRING base_currency FK
-  STRING target_currency FK
+  INTEGER base_currency_id FK
+  INTEGER target_currency_id FK
   NUMERIC rate
   DATE date
   TIMESTAMP created_at
@@ -93,8 +94,9 @@ CREATE TABLE categories (
 );
 
 CREATE TABLE currencies (
-  code VARCHAR(16) PRIMARY KEY, -- 例: 'USD', 'JPY'
-  name VARCHAR(32) NOT NULL,    -- 例: 'USドル', '日本円'
+  id SERIAL PRIMARY KEY,
+  code VARCHAR(16) UNIQUE NOT NULL, -- 例: 'USD', 'JPY'
+  name VARCHAR(32) NOT NULL,        -- 例: 'USドル', '日本円'
   created_at TIMESTAMP NOT NULL DEFAULT now(),
   updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
@@ -104,7 +106,7 @@ CREATE TABLE subscriptions (
   user_id UUID REFERENCES users(id) ON DELETE CASCADE, -- ユーザーごとの契約情報を表す
   name VARCHAR(255) NOT NULL, -- サービス名（例: Netflix, Spotify など）
   price NUMERIC(10, 2) NOT NULL,
-  currency_code VARCHAR(16) REFERENCES currencies(code),
+  currency_id INTEGER REFERENCES currencies(id), -- 数値IDによる外部キー
   billing_cycle VARCHAR(32) NOT NULL, -- 例: 'monthly', 'yearly'
   start_date DATE NOT NULL,
   next_renewal_date DATE NOT NULL,
@@ -126,8 +128,8 @@ CREATE TABLE notifications (
 
 CREATE TABLE exchange_rates (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  base_currency VARCHAR(16) NOT NULL REFERENCES currencies(code),
-  target_currency VARCHAR(16) NOT NULL REFERENCES currencies(code),
+  base_currency_id INTEGER NOT NULL REFERENCES currencies(id),
+  target_currency_id INTEGER NOT NULL REFERENCES currencies(id),
   rate NUMERIC(10, 4) NOT NULL,
   date DATE NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT now(),
