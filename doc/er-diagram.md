@@ -64,9 +64,9 @@ exchange_rates {
   TIMESTAMP updated_at
 }
 
-users ||--o{ subscriptions : "所有する"
-subscriptions ||--o{ notifications : "通知をトリガーする"
-subscriptions }o--|| categories : "分類される"
+users ||--o{ subscriptions : "ユーザーごとの契約"
+subscriptions ||--o{ notifications : "通知"
+subscriptions }o--|| categories : "分類"
 subscriptions }o--|| currencies : "支払い通貨"
 exchange_rates }o--|| currencies : "基準通貨"
 exchange_rates }o--|| currencies : "対象通貨"
@@ -101,8 +101,8 @@ CREATE TABLE currencies (
 
 CREATE TABLE subscriptions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  name VARCHAR(255) NOT NULL,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE, -- ユーザーごとの契約情報を表す
+  name VARCHAR(255) NOT NULL, -- サービス名（例: Netflix, Spotify など）
   price NUMERIC(10, 2) NOT NULL,
   currency_code VARCHAR(16) REFERENCES currencies(code),
   billing_cycle VARCHAR(32) NOT NULL, -- 例: 'monthly', 'yearly'
