@@ -17,23 +17,23 @@ users {
 
 subscriptions {
   UUID id PK
-  UUID user_id FK
+  UUID user_id FK "→ users.id"
   STRING name
   NUMERIC price
-  INTEGER currency_id FK
+  INTEGER currency_id FK "→ currencies.id"
   STRING billing_cycle
   DATE start_date
   DATE next_renewal_date
   INTEGER notify_before
   BOOLEAN is_active
-  INTEGER category_id FK
+  INTEGER category_id FK "→ categories.id"
   TIMESTAMP created_at
   TIMESTAMP updated_at
 }
 
 notifications {
   UUID id PK
-  UUID subscription_id FK
+  UUID subscription_id FK "→ subscriptions.id"
   TIMESTAMP sent_at
   STRING channel
   TIMESTAMP created_at
@@ -57,8 +57,8 @@ currencies {
 
 exchange_rates {
   UUID id PK
-  INTEGER base_currency_id FK
-  INTEGER target_currency_id FK
+  INTEGER base_currency_id FK "→ currencies.id"
+  INTEGER target_currency_id FK "→ currencies.id"
   NUMERIC rate
   DATE date
   TIMESTAMP created_at
