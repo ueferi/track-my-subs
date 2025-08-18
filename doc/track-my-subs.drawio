@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="サブスク管理アプリ アーキテクチャ" id="kzjIc5iUJ5Qes6k_wa_T">
+    <mxGraphModel dx="1200" dy="660" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- ユーザー端末 -->
+        <mxCell id="2" value="ユーザー端末&#10;(React + TypeScript)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1565c0;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="100" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <!-- APIサーバ -->
+        <mxCell id="3" value="APIサーバ&#10;(Node.js + Fastify)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="100" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <!-- PostgreSQL -->
+        <mxCell id="4" value="DB&#10;(PostgreSQL)" style="shape=cylinder;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="70" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <!-- 通知インフラ -->
+        <mxCell id="5" value="通知インフラ&#10;(メール/SNS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8e1;strokeColor=#fbc02d;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="150" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <!-- APIサーバ → DB -->
+        <mxCell id="6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endFill=1;strokeColor=#7b1fa2;" edge="1" parent="1" source="3" target="4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- APIサーバ → 通知インフラ -->
+        <mxCell id="7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endFill=1;strokeColor=#fbc02d;" edge="1" parent="1" source="3" target="5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- ユーザー端末 → APIサーバ -->
+        <mxCell id="8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endFill=1;strokeColor=#1565c0;" edge="1" parent="1" source="2" target="3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
