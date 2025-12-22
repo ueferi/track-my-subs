@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email           String         @unique @db.VarChar(255)
+  passwordDigest  String         @map("password_digest") @db.VarChar(255)
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  subscriptions   Subscription[]
+
+  @@map("users")
+}
+
+model Category {
+  id            Int            @id @default(autoincrement())
+  name          String         @db.VarChar(255)
+  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt     DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  subscriptions Subscription[]
+
+  @@map("categories")
+}
+
+model Currency {
+  id                     Int            @id @default(autoincrement())
+  code                   String         @unique @db.VarChar(16)
+  name                   String         @db.VarChar(32)
+  createdAt              DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt              DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  subscriptions          Subscription[]
+  exchangeRatesAsBase    ExchangeRate[] @relation("BaseCurrency")
+  exchangeRatesAsTarget  ExchangeRate[] @relation("TargetCurrency")
+
+  @@map("currencies")
+}
+
+model Subscription {
+  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId           String         @map("user_id") @db.Uuid
+  name             String         @db.VarChar(255)
+  price            Decimal        @db.Decimal(10, 2)
+  currencyId       Int?           @map("currency_id")
+  billingCycle     String         @map("billing_cycle") @db.VarChar(32)
+  startDate        DateTime       @map("start_date") @db.Date
+  nextRenewalDate  DateTime       @map("next_renewal_date") @db.Date
+  notifyBefore     Int            @default(7) @map("notify_before")
+  isActive         Boolean        @default(true) @map("is_active")
+  categoryId       Int?           @map("category_id")
+  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt        DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currency         Currency?      @relation(fields: [currencyId], references: [id])
+  category         Category?      @relation(fields: [categoryId], references: [id])
+  notifications    Notification[]
+
+  @@map("subscriptions")
+}
+
+model Notification {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  subscriptionId String       @map("subscription_id") @db.Uuid
+  sentAt         DateTime?    @map("sent_at") @db.Timestamp(6)
+  channel        String       @default("email") @db.VarChar(32)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model ExchangeRate {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  baseCurrencyId   Int      @map("base_currency_id")
+  targetCurrencyId Int      @map("target_currency_id")
+  rate             Decimal  @db.Decimal(10, 4)
+  date             DateTime @db.Date
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  baseCurrency     Currency @relation("BaseCurrency", fields: [baseCurrencyId], references: [id])
+  targetCurrency   Currency @relation("TargetCurrency", fields: [targetCurrencyId], references: [id])
+
+  @@map("exchange_rates")
+}
