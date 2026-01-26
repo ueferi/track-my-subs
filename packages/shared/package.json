@@ -1,23 +1,23 @@
 {
-  "name": "shared",
-  "version": "1.0.0",
-  "description": "Shared types and utilities for track-my-subs",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
-  "scripts": {
-    "build": "tsc",
-    "prebuild": "rm -rf dist tsconfig.tsbuildinfo",
-    "clean": "rm -rf dist tsconfig.tsbuildinfo",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.14.0"
+	"name": "shared",
+	"version": "1.0.0",
+	"description": "Shared types and utilities for track-my-subs",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc",
+		"prebuild": "rm -rf dist tsconfig.tsbuildinfo",
+		"clean": "rm -rf dist tsconfig.tsbuildinfo",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.14.0"
 }
