@@ -20,6 +20,7 @@
     "tsx": "^4.21.0"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0"
+    "@prisma/client": "^5.22.0",
+    "shared": "workspace:*"
   }
 }

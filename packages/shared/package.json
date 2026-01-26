@@ -1,9 +1,19 @@
 {
   "name": "shared",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Shared types and utilities for track-my-subs",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "scripts": {
+    "build": "tsc",
+    "prebuild": "rm -rf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
