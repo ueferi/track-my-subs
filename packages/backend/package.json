@@ -1,25 +1,26 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "db:migrate": "prisma migrate dev",
-    "db:generate": "prisma generate",
-    "db:studio": "prisma studio",
-    "db:seed": "prisma db seed",
-    "db:test": "tsx src/test-db-connection.ts"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.14.0",
-  "devDependencies": {
-    "prisma": "^5.22.0",
-    "tsx": "^4.21.0"
-  },
-  "dependencies": {
-    "@prisma/client": "^5.22.0"
-  }
+	"name": "backend",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"db:migrate": "prisma migrate dev",
+		"db:generate": "prisma generate",
+		"db:studio": "prisma studio",
+		"db:seed": "prisma db seed",
+		"db:test": "tsx src/test-db-connection.ts"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.14.0",
+	"devDependencies": {
+		"prisma": "^5.22.0",
+		"tsx": "^4.21.0"
+	},
+	"dependencies": {
+		"@prisma/client": "^5.22.0",
+		"shared": "workspace:*"
+	}
 }
