@@ -1,6 +1,7 @@
 import { useId, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.js";
+import styles from "./AuthPage.module.css";
 
 export function LoginPage() {
 	const [email, setEmail] = useState("");
@@ -19,37 +20,45 @@ export function LoginPage() {
 	};
 
 	return (
-		<div>
-			<h1>ログイン</h1>
-			<form onSubmit={handleSubmit}>
-				<div>
-					<label htmlFor={emailId}>メールアドレス</label>
-					<input
-						id={emailId}
-						type="email"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-						required
-					/>
-				</div>
-				<div>
-					<label htmlFor={passwordId}>パスワード</label>
-					<input
-						id={passwordId}
-						type="password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						required
-					/>
-				</div>
-				{error && <p>{error}</p>}
-				<button type="submit" disabled={loading}>
-					{loading ? "ログイン中..." : "ログイン"}
-				</button>
-			</form>
-			<p>
-				アカウントをお持ちでない方は <a href="/register">新規登録</a>
-			</p>
+		<div className={styles.container}>
+			<div className={styles.card}>
+				<h1 className={styles.title}>ログイン</h1>
+				<form onSubmit={handleSubmit}>
+					<div className={styles.field}>
+						<label className={styles.label} htmlFor={emailId}>
+							メールアドレス
+						</label>
+						<input
+							className={styles.input}
+							id={emailId}
+							type="email"
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+							required
+						/>
+					</div>
+					<div className={styles.field}>
+						<label className={styles.label} htmlFor={passwordId}>
+							パスワード
+						</label>
+						<input
+							className={styles.input}
+							id={passwordId}
+							type="password"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+							required
+						/>
+					</div>
+					{error && <p className={styles.error}>{error}</p>}
+					<button className={styles.button} type="submit" disabled={loading}>
+						{loading ? "ログイン中..." : "ログイン"}
+					</button>
+				</form>
+				<p className={styles.footer}>
+					アカウントをお持ちでない方は <Link to="/register">新規登録</Link>
+				</p>
+			</div>
 		</div>
 	);
 }

@@ -15,6 +15,10 @@ export function removeToken(): void {
 	localStorage.removeItem("token");
 }
 
+export function isAuthenticated(): boolean {
+	return getToken() !== null;
+}
+
 async function request<T>(
 	path: string,
 	options: RequestInit = {},
