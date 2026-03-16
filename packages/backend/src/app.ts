@@ -3,6 +3,7 @@ import corsPlugin from "./plugins/cors.js";
 import errorHandlerPlugin from "./plugins/error-handler.js";
 import jwtPlugin from "./plugins/jwt.js";
 import { authRoutes } from "./routes/auth.js";
+import { subscriptionRoutes } from "./routes/subscriptions.js";
 
 export function buildApp() {
 	const fastify = Fastify({
@@ -16,6 +17,7 @@ export function buildApp() {
 
 	// ルート登録
 	fastify.register(authRoutes, { prefix: "/api/auth" });
+	fastify.register(subscriptionRoutes, { prefix: "/api/subscriptions" });
 
 	// ヘルスチェック
 	fastify.get("/api/health", async () => {
