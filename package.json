@@ -1,19 +1,19 @@
 {
-  "name": "track-my-subs",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "biome check .",
-    "format": "biome format . --write"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.14.0",
-  "devDependencies": {
-    "@biomejs/biome": "^2.2.0",
-    "typescript": "^5.9.2"
-  }
+	"name": "track-my-subs",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"lint": "biome check .",
+		"format": "biome format . --write"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.14.0",
+	"devDependencies": {
+		"@biomejs/biome": "^2.2.0",
+		"typescript": "^5.9.2"
+	}
 }
