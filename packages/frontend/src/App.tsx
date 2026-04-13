@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { isAuthenticated } from "./api/client.js";
 import { LoginPage } from "./pages/LoginPage.js";
 import { RegisterPage } from "./pages/RegisterPage.js";
+import { SubscriptionFormPage } from "./pages/SubscriptionFormPage.js";
 import { SubscriptionListPage } from "./pages/SubscriptionListPage.js";
 
 /** 未ログイン専用ルート：ログイン済みなら / にリダイレクト */
@@ -26,6 +27,14 @@ function App() {
 				<Route
 					path="/register"
 					element={<GuestRoute element={<RegisterPage />} />}
+				/>
+				<Route
+					path="/subscriptions/new"
+					element={<PrivateRoute element={<SubscriptionFormPage />} />}
+				/>
+				<Route
+					path="/subscriptions/:id/edit"
+					element={<PrivateRoute element={<SubscriptionFormPage />} />}
 				/>
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
