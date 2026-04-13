@@ -98,3 +98,17 @@
 	opacity: 0.6;
 	cursor: not-allowed;
 }
+
+@media (max-width: 480px) {
+	.container {
+		margin: 1rem auto;
+	}
+
+	.actions {
+		flex-direction: column-reverse;
+	}
+
+	.actions button {
+		width: 100%;
+	}
+}

@@ -99,3 +99,12 @@
 .footer a:hover {
 	text-decoration: underline;
 }
+
+@media (max-width: 480px) {
+	.card {
+		padding: 1.5rem 1.25rem;
+		border-radius: 0;
+		box-shadow: none;
+		min-height: 100vh;
+	}
+}
