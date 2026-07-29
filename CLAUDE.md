@@ -16,8 +16,11 @@
 - **テスト**: Jest（バックエンドのみ）
 - **Lint/Format**: Biome
 - **デプロイ**: AWS
-  - ステージング環境: mainブランチから自動デプロイ（将来実装予定）
-  - 本番環境: Gitタグ（`v*.*.*`）から手動デプロイ
+  - フロントエンド: S3 + CloudFront
+  - バックエンド: ECS Fargate + ALB（VPC内プライベートサブネット）
+  - データベース: RDS PostgreSQL（t4g.micro、VPC内プライベートサブネット）
+  - ステージング環境: mainブランチから自動デプロイ（GitHub Actions）
+  - 本番環境: Gitタグ（`v*.*.*`）からデプロイ
 
 ## ディレクトリ構造
 
