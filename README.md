@@ -165,20 +165,14 @@ cd track-my-subs
 pnpm install
 ```
 
-`packages/backend/.env` を作成して以下の環境変数を設定してください。
+`.env.example` をコピーして `.env` を作成してください。
 
-```
-DATABASE_URL="postgresql://track_my_subs_user:dev_password@localhost:5432/track_my_subs_dev"
-PORT=3000
-NODE_ENV=development
-JWT_SECRET="your-jwt-secret-key-change-in-production"
+```bash
+cp packages/backend/.env.example packages/backend/.env
+cp packages/frontend/.env.example packages/frontend/.env
 ```
 
-`packages/frontend/.env` を作成して以下の環境変数を設定してください。
-
-```
-VITE_API_BASE_URL=http://localhost:3000
-```
+`packages/backend/.env` は、`DATABASE_URL`（ローカルDBの接続情報）と `JWT_SECRET`（任意の文字列）を環境に合わせて変更してください。
 
 ```bash
 # DB マイグレーション & seed
