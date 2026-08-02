@@ -1,78 +1,116 @@
 # track-my-subs
 
-個人のサブスクリプション契約を管理・可視化するための Web アプリケーション。
-契約中サービスの登録、更新リマインダー、支払いサイクルの把握などを通じて、無駄な出費を減らすことを目的としている。
-
----
+個人のサブスクリプション契約を管理・可視化するWebアプリ。
 
 ## デモ
 
-**URL**: https://d10k5af6gcnz45.cloudfront.net
+- **URL:** https://d10k5af6gcnz45.cloudfront.net
+- **メール:** demo@example.com
+- **パスワード:** Demo1234!
 
-**デモアカウント**
-
-| 項目 | 値 |
-|------|----|
-| メールアドレス | demo@example.com |
-| パスワード | Demo1234! |
+このデモアカウントは検証用に複数人で共有しているため、実際の個人情報は登録しないでください。
 
 ---
 
-## 要件定義
+## このアプリについて
 
-### 背景・目的
-
-サブスクリプションサービスが増えるにつれ、いつ・いくら支払っているかを把握しにくくなっている。このアプリにサービスを登録することで、支払い状況の一元管理と更新前の通知を実現し、不要なサブスクリプションの解約漏れを防ぐ。
-
-### ターゲットユーザー
-
-複数のサブスクリプションサービスを契約している個人ユーザー。
-
-### 機能要件
-
-- ユーザー登録・ログインができる
-- サブスクリプションを登録・編集・削除できる
-- 登録したサブスクリプションの一覧を確認できる
-- カテゴリ・通貨・請求サイクル（月額 / 年額）を設定できる
-- 次回更新日の指定日前にメール通知を受け取れる
-
-### 非機能要件
-
-- スマートフォンでも利用できる（レスポンシブ対応）
-- JWT を使った認証でデータをユーザーごとに分離する
+契約しているサブスクリプションが増えると、いつ・いくら支払っているかが把握しづらくなり、更新日を忘れて不要なサービスを解約しそびれることがある。track-my-subsは、複数のサブスクリプションを1箇所にまとめて登録し、カテゴリ・通貨・請求サイクルごとに整理して支払い状況を一覧できるようにするためのアプリ。
 
 ---
 
-## 機能一覧
+## 主な機能
 
-| 機能 | 状態 |
-|------|------|
-| ユーザー登録 | ✅ 実装済み |
-| ログイン / ログアウト | ✅ 実装済み |
-| サブスクリプション一覧表示 | ✅ 実装済み |
-| サブスクリプション登録 | ✅ 実装済み |
-| サブスクリプション編集 | ✅ 実装済み |
-| サブスクリプション削除 | ✅ 実装済み |
-| カテゴリ選択 | ✅ 実装済み |
-| 通貨選択 | ✅ 実装済み |
-| 通知設定（更新日の N 日前） | ✅ 実装済み |
-| レスポンシブ対応 | ✅ 実装済み |
-| 更新前メール通知 | 🚧 未実装 |
+- サブスクリプションの登録・編集・削除・一覧表示
+- カテゴリ・通貨・請求サイクル（月額 / 年額）による分類
+- 更新日の指定日前に通知するための設定
+- メールアドレスでの登録・ログイン（JWT認証）
+- スマートフォンでも利用できるレスポンシブ対応
+
+---
+
+## データベース設計
+
+```mermaid
+erDiagram
+
+users {
+  UUID id PK
+  STRING email
+  STRING password_digest
+  TIMESTAMP created_at
+  TIMESTAMP updated_at
+}
+
+subscriptions {
+  UUID id PK
+  UUID user_id FK "→ users.id"
+  STRING name
+  NUMERIC price
+  INTEGER currency_id FK "→ currencies.id"
+  STRING billing_cycle
+  DATE start_date
+  DATE next_renewal_date
+  INTEGER notify_before
+  BOOLEAN is_active
+  INTEGER category_id FK "→ categories.id"
+  TIMESTAMP created_at
+  TIMESTAMP updated_at
+}
+
+notifications {
+  UUID id PK
+  UUID subscription_id FK "→ subscriptions.id"
+  TIMESTAMP sent_at
+  STRING channel
+  TIMESTAMP created_at
+  TIMESTAMP updated_at
+}
+
+categories {
+  INTEGER id PK
+  STRING name
+  TIMESTAMP created_at
+  TIMESTAMP updated_at
+}
+
+currencies {
+  INTEGER id PK
+  STRING code
+  STRING name
+  TIMESTAMP created_at
+  TIMESTAMP updated_at
+}
+
+exchange_rates {
+  UUID id PK
+  INTEGER base_currency_id FK "→ currencies.id"
+  INTEGER target_currency_id FK "→ currencies.id"
+  NUMERIC rate
+  DATE date
+  TIMESTAMP created_at
+  TIMESTAMP updated_at
+}
+
+users ||--o{ subscriptions : "ユーザーごとの契約"
+subscriptions ||--o{ notifications : "通知"
+subscriptions }o--|| categories : "分類"
+subscriptions }o--|| currencies : "支払い通貨"
+exchange_rates }o--|| currencies : "基準通貨"
+exchange_rates }o--|| currencies : "対象通貨"
+```
+
+テーブル定義（SQL）などの詳細は [doc/er-diagram.md](doc/er-diagram.md) を参照。
 
 ---
 
 ## 技術スタック
 
-| レイヤー | 技術 |
-|----------|------|
+| カテゴリ | 技術 |
+| --- | --- |
 | フロントエンド | React + TypeScript + Vite |
 | バックエンド | Fastify + TypeScript |
-| データベース | PostgreSQL |
-| ORM | Prisma |
-| 型共有 | pnpm workspace + `packages/shared` |
-| パッケージ管理 | pnpm |
-| Lint / Format | Biome |
-| デプロイ | AWS（構成検討中: ECS Fargate + ALB / S3 + CloudFront / RDS） |
+| データベース | PostgreSQL / Prisma ORM |
+| デプロイ | フロントエンド: AWS S3 + CloudFront / バックエンド・DB: Render |
 
 ### モノレポ構成
 
@@ -98,13 +136,27 @@ track-my-subs/
 ### セットアップ
 
 ```bash
-# 依存関係インストール
+git clone https://github.com/ueferi/track-my-subs.git
+cd track-my-subs
 pnpm install
+```
 
-# 環境変数設定
-cp packages/backend/.env.example packages/backend/.env
-# .env を編集して DATABASE_URL などを設定
+`packages/backend/.env` を作成して以下の環境変数を設定してください。
 
+```
+DATABASE_URL="postgresql://track_my_subs_user:dev_password@localhost:5432/track_my_subs_dev"
+PORT=3000
+NODE_ENV=development
+JWT_SECRET="your-jwt-secret-key-change-in-production"
+```
+
+`packages/frontend/.env` を作成して以下の環境変数を設定してください。
+
+```
+VITE_API_BASE_URL=http://localhost:3000
+```
+
+```bash
 # DB マイグレーション & seed
 cd packages/backend
 pnpm db:migrate
