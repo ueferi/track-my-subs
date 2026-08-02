@@ -28,6 +28,30 @@
 
 ---
 
+## アーキテクチャ
+
+```mermaid
+flowchart LR
+  User["ユーザー（ブラウザ）"]
+
+  subgraph AWS["AWS"]
+    CloudFront["CloudFront"]
+    S3["S3（静的ファイル）"]
+    CloudFront --> S3
+  end
+
+  subgraph Render["Render"]
+    Backend["Fastify API"]
+    DB[("PostgreSQL")]
+    Backend --> DB
+  end
+
+  User -->|画面表示| CloudFront
+  User -->|APIリクエスト（JWT）| Backend
+```
+
+---
+
 ## データベース設計
 
 ```mermaid
