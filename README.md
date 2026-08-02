@@ -180,17 +180,16 @@ cp packages/frontend/.env.example packages/frontend/.env
 `packages/backend/.env` は、`DATABASE_URL`（ローカルDBの接続情報）と `JWT_SECRET`（任意の文字列）を環境に合わせて変更してください。
 
 ```bash
-# DB マイグレーション & seed
-cd packages/backend
-pnpm db:migrate
-pnpm db:seed
+# DB マイグレーション & seed（リポジトリルートから実行）
+pnpm --filter backend db:migrate
+pnpm --filter backend db:seed
 
 # 開発サーバー起動
 # ターミナル1（バックエンド）
-cd packages/backend && pnpm dev
+pnpm --filter backend dev
 
 # ターミナル2（フロントエンド）
-cd packages/frontend && pnpm dev
+pnpm --filter frontend dev
 ```
 
 フロントエンド: http://localhost:5173
