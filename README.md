@@ -165,6 +165,11 @@ cd track-my-subs
 pnpm install
 ```
 
+```bash
+# PostgreSQL を起動
+docker compose up -d
+```
+
 `.env.example` をコピーして `.env` を作成してください。
 
 ```bash
