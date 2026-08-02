@@ -13,12 +13,11 @@
 - **共有型定義**: TypeScript (`packages/shared`)
 - **データベース**: PostgreSQL
 - **パッケージマネージャ**: pnpm
-- **テスト**: Jest（バックエンドのみ）
 - **Lint/Format**: Biome
-- **デプロイ**: AWS
-  - フロントエンド: S3 + CloudFront
-  - バックエンド: ECS Fargate + ALB（VPC内プライベートサブネット）
-  - データベース: RDS PostgreSQL（t4g.micro、VPC内プライベートサブネット）
+- **デプロイ**:
+  - フロントエンド: AWS S3 + CloudFront
+  - バックエンド: Render Web Service
+  - データベース: Render PostgreSQL
   - ステージング環境: mainブランチから自動デプロイ（GitHub Actions）
   - 本番環境: Gitタグ（`v*.*.*`）からデプロイ
 
@@ -88,17 +87,17 @@ issue_* ブランチで実装
     ↓
 PR → main にマージ
     ↓
-ステージング環境（AWS）← mainブランチ
+ステージング環境（フロントエンド: AWS / バックエンド・DB: Render）← mainブランチ
     ↓
 検証完了後、タグ作成（例: v1.0.0）
     ↓
-本番環境（AWS）← Gitタグからデプロイ
+本番環境（フロントエンド: AWS / バックエンド・DB: Render）← Gitタグからデプロイ
 ```
 
 **環境ごとのデータベース:**
 - **開発**: ローカルPostgreSQL（Docker推奨）
-- **ステージング**: AWS RDS（小規模インスタンス）
-- **本番**: AWS RDS（適切なスペック）
+- **ステージング**: Render PostgreSQL（小規模インスタンス）
+- **本番**: Render PostgreSQL（適切なスペック）
 
 **重要**: ステージングと本番のデータベースは完全分離し、本番データは絶対にステージングで使用しない。
 
