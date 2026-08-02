@@ -260,6 +260,9 @@ export function SubscriptionFormPage() {
 						onChange={handleChange}
 						required
 					/>
+					<p className={styles.fieldHint}>
+						※ 現在この設定は保存のみで、メール通知の送信機能は開発中です
+					</p>
 				</div>
 
 				<div className={styles.fieldInline}>
