@@ -28,7 +28,7 @@ export function SubscriptionListPage() {
 
 	const handleLogout = () => {
 		logout();
-		navigate("/login");
+		navigate("/login", { replace: true });
 	};
 
 	const fetchSubscriptions = useCallback(async () => {
@@ -38,13 +38,14 @@ export function SubscriptionListPage() {
 		if (!result.success) {
 			setError(result.error);
 			if (result.error === "認証が必要です") {
-				navigate("/login");
+				logout();
+				navigate("/login", { replace: true });
 			}
 			return;
 		}
 
 		setSubscriptions(result.data.subscriptions);
-	}, [navigate]);
+	}, [navigate, logout]);
 
 	useEffect(() => {
 		fetchSubscriptions();
