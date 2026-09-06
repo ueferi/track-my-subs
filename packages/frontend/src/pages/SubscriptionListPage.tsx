@@ -15,6 +15,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { SubscriptionWithRelations } from "shared";
 import { subscriptionsApi } from "../api/subscriptions.js";
+import { useAuth } from "../hooks/useAuth.js";
 
 export function SubscriptionListPage() {
 	const [subscriptions, setSubscriptions] = useState<
@@ -23,6 +24,12 @@ export function SubscriptionListPage() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const navigate = useNavigate();
+	const { logout } = useAuth();
+
+	const handleLogout = () => {
+		logout();
+		navigate("/login", { replace: true });
+	};
 
 	const fetchSubscriptions = useCallback(async () => {
 		const result = await subscriptionsApi.list();
@@ -31,13 +38,14 @@ export function SubscriptionListPage() {
 		if (!result.success) {
 			setError(result.error);
 			if (result.error === "認証が必要です") {
-				navigate("/login");
+				logout();
+				navigate("/login", { replace: true });
 			}
 			return;
 		}
 
 		setSubscriptions(result.data.subscriptions);
-	}, [navigate]);
+	}, [navigate, logout]);
 
 	useEffect(() => {
 		fetchSubscriptions();
@@ -83,10 +91,12 @@ export function SubscriptionListPage() {
 				<Title order={1} fz="h2">
 					サブスクリプション一覧
 				</Title>
-				{/* 操作ボタン領域（今後ログアウトボタンを追加予定） */}
 				<Group gap="sm">
 					<Button onClick={() => navigate("/subscriptions/new")}>
 						+ 新規追加
+					</Button>
+					<Button variant="outline" color="red" onClick={handleLogout}>
+						ログアウト
 					</Button>
 				</Group>
 			</Group>

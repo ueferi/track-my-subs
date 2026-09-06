@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { User } from "shared";
 import { authApi } from "../api/auth.js";
 import { removeToken, setToken } from "../api/client.js";
@@ -40,10 +40,10 @@ export function useAuth() {
 		return true;
 	};
 
-	const logout = () => {
+	const logout = useCallback(() => {
 		removeToken();
 		setUser(null);
-	};
+	}, []);
 
 	return { user, error, loading, register, login, logout };
 }
