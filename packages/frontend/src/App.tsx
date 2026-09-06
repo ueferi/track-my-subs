@@ -1,3 +1,7 @@
+import { MantineProvider } from "@mantine/core";
+import { DatesProvider } from "@mantine/dates";
+import { ModalsProvider } from "@mantine/modals";
+import { Notifications } from "@mantine/notifications";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { isAuthenticated } from "./api/client.js";
 import { LoginPage } from "./pages/LoginPage.js";
@@ -17,28 +21,38 @@ function PrivateRoute({ element }: { element: React.ReactElement }) {
 
 function App() {
 	return (
-		<BrowserRouter>
-			<Routes>
-				<Route
-					path="/"
-					element={<PrivateRoute element={<SubscriptionListPage />} />}
-				/>
-				<Route path="/login" element={<GuestRoute element={<LoginPage />} />} />
-				<Route
-					path="/register"
-					element={<GuestRoute element={<RegisterPage />} />}
-				/>
-				<Route
-					path="/subscriptions/new"
-					element={<PrivateRoute element={<SubscriptionFormPage />} />}
-				/>
-				<Route
-					path="/subscriptions/:id/edit"
-					element={<PrivateRoute element={<SubscriptionFormPage />} />}
-				/>
-				<Route path="*" element={<Navigate to="/" replace />} />
-			</Routes>
-		</BrowserRouter>
+		<MantineProvider defaultColorScheme="light">
+			<DatesProvider settings={{ locale: "ja" }}>
+				<ModalsProvider>
+					<Notifications />
+					<BrowserRouter>
+						<Routes>
+							<Route
+								path="/"
+								element={<PrivateRoute element={<SubscriptionListPage />} />}
+							/>
+							<Route
+								path="/login"
+								element={<GuestRoute element={<LoginPage />} />}
+							/>
+							<Route
+								path="/register"
+								element={<GuestRoute element={<RegisterPage />} />}
+							/>
+							<Route
+								path="/subscriptions/new"
+								element={<PrivateRoute element={<SubscriptionFormPage />} />}
+							/>
+							<Route
+								path="/subscriptions/:id/edit"
+								element={<PrivateRoute element={<SubscriptionFormPage />} />}
+							/>
+							<Route path="*" element={<Navigate to="/" replace />} />
+						</Routes>
+					</BrowserRouter>
+				</ModalsProvider>
+			</DatesProvider>
+		</MantineProvider>
 	);
 }
 

@@ -1,10 +1,23 @@
-import { useEffect, useId, useState } from "react";
+import {
+	Alert,
+	Button,
+	Checkbox,
+	Container,
+	Group,
+	Loader,
+	NumberInput,
+	Select,
+	Stack,
+	TextInput,
+	Title,
+} from "@mantine/core";
+import { DatePickerInput } from "@mantine/dates";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { BillingCycle, Category, Currency } from "shared";
 import { categoriesApi } from "../api/categories.js";
 import { currenciesApi } from "../api/currencies.js";
 import { subscriptionsApi } from "../api/subscriptions.js";
-import styles from "./SubscriptionFormPage.module.css";
 
 interface FormValues {
 	name: string;
@@ -30,6 +43,14 @@ const defaultValues: FormValues = {
 	categoryId: "",
 };
 
+const billingCycleOptions = [
+	{ value: "monthly", label: "月額" },
+	{ value: "yearly", label: "年額" },
+] satisfies { value: BillingCycle; label: string }[];
+
+const isBillingCycle = (value: string | null): value is BillingCycle =>
+	billingCycleOptions.some((option) => option.value === value);
+
 export function SubscriptionFormPage() {
 	const { id } = useParams<{ id: string }>();
 	const isEdit = id !== undefined;
@@ -41,17 +62,6 @@ export function SubscriptionFormPage() {
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(isEdit);
-
-	const uid = useId();
-	const nameId = `${uid}-name`;
-	const priceId = `${uid}-price`;
-	const currencyId = `${uid}-currencyId`;
-	const billingCycleId = `${uid}-billingCycle`;
-	const startDateId = `${uid}-startDate`;
-	const nextRenewalDateId = `${uid}-nextRenewalDate`;
-	const categoryIdId = `${uid}-categoryId`;
-	const notifyBeforeId = `${uid}-notifyBefore`;
-	const isActiveId = `${uid}-isActive`;
 
 	useEffect(() => {
 		const fetchMeta = async () => {
@@ -94,18 +104,11 @@ export function SubscriptionFormPage() {
 		fetchSubscription();
 	}, [id, isEdit]);
 
-	const handleChange = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+	const setField = <K extends keyof FormValues>(
+		key: K,
+		value: FormValues[K],
 	) => {
-		const { name, value, type } = e.target;
-		if (type === "checkbox") {
-			setValues((prev) => ({
-				...prev,
-				[name]: (e.target as HTMLInputElement).checked,
-			}));
-		} else {
-			setValues((prev) => ({ ...prev, [name]: value }));
-		}
+		setValues((prev) => ({ ...prev, [key]: value }));
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -140,155 +143,132 @@ export function SubscriptionFormPage() {
 		navigate("/");
 	};
 
-	if (loading) return <p>読み込み中...</p>;
+	if (loading) {
+		return (
+			<Container size="sm" my="xl">
+				<Group justify="center">
+					<Loader />
+				</Group>
+			</Container>
+		);
+	}
 
 	return (
-		<div className={styles.container}>
-			<h1>
+		<Container size="sm" my="xl">
+			<Title order={1} fz="h2" mb="lg">
 				{isEdit ? "サブスクリプションを編集" : "サブスクリプションを追加"}
-			</h1>
+			</Title>
 
-			{error && <p className={styles.error}>{error}</p>}
+			{error && (
+				<Alert color="red" variant="light" mb="md">
+					{error}
+				</Alert>
+			)}
 
-			<form onSubmit={handleSubmit} className={styles.form}>
-				<div className={styles.field}>
-					<label htmlFor={nameId}>サービス名</label>
-					<input
-						id={nameId}
-						name="name"
-						type="text"
+			<form onSubmit={handleSubmit}>
+				<Stack>
+					<TextInput
+						label="サービス名"
 						value={values.name}
-						onChange={handleChange}
+						onChange={(e) => setField("name", e.currentTarget.value)}
 						required
 					/>
-				</div>
 
-				<div className={styles.field}>
-					<label htmlFor={priceId}>金額</label>
-					<input
-						id={priceId}
-						name="price"
-						type="text"
+					<TextInput
+						label="金額"
 						inputMode="decimal"
 						value={values.price}
-						onChange={handleChange}
+						onChange={(e) => setField("price", e.currentTarget.value)}
 						required
 					/>
-				</div>
 
-				<div className={styles.field}>
-					<label htmlFor={currencyId}>通貨</label>
-					<select
-						id={currencyId}
-						name="currencyId"
-						value={values.currencyId}
-						onChange={handleChange}
-					>
-						<option value="">選択してください</option>
-						{currencies.map((c) => (
-							<option key={c.id} value={String(c.id)}>
-								{c.code} - {c.name}
-							</option>
-						))}
-					</select>
-				</div>
+					<Select
+						label="通貨"
+						placeholder="選択してください"
+						data={currencies.map((c) => ({
+							value: String(c.id),
+							label: `${c.code} - ${c.name}`,
+						}))}
+						value={values.currencyId || null}
+						onChange={(v) => setField("currencyId", v ?? "")}
+						clearable
+					/>
 
-				<div className={styles.field}>
-					<label htmlFor={billingCycleId}>請求サイクル</label>
-					<select
-						id={billingCycleId}
-						name="billingCycle"
+					<Select
+						label="請求サイクル"
+						data={billingCycleOptions}
 						value={values.billingCycle}
-						onChange={handleChange}
-						required
-					>
-						<option value="monthly">月額</option>
-						<option value="yearly">年額</option>
-					</select>
-				</div>
-
-				<div className={styles.field}>
-					<label htmlFor={startDateId}>開始日</label>
-					<input
-						id={startDateId}
-						name="startDate"
-						type="date"
-						value={values.startDate}
-						onChange={handleChange}
+						onChange={(v) => {
+							if (isBillingCycle(v)) setField("billingCycle", v);
+						}}
+						allowDeselect={false}
 						required
 					/>
-				</div>
 
-				<div className={styles.field}>
-					<label htmlFor={nextRenewalDateId}>次回更新日</label>
-					<input
-						id={nextRenewalDateId}
-						name="nextRenewalDate"
-						type="date"
-						value={values.nextRenewalDate}
-						onChange={handleChange}
+					<DatePickerInput
+						label="開始日"
+						placeholder="日付を選択"
+						value={values.startDate || null}
+						onChange={(v) => setField("startDate", v ?? "")}
+						valueFormat="YYYY-MM-DD"
 						required
 					/>
-				</div>
 
-				<div className={styles.field}>
-					<label htmlFor={categoryIdId}>カテゴリ</label>
-					<select
-						id={categoryIdId}
-						name="categoryId"
-						value={values.categoryId}
-						onChange={handleChange}
-					>
-						<option value="">選択してください</option>
-						{categories.map((c) => (
-							<option key={c.id} value={String(c.id)}>
-								{c.name}
-							</option>
-						))}
-					</select>
-				</div>
-
-				<div className={styles.field}>
-					<label htmlFor={notifyBeforeId}>更新通知（日前）</label>
-					<input
-						id={notifyBeforeId}
-						name="notifyBefore"
-						type="number"
-						min="0"
-						max="30"
-						value={values.notifyBefore}
-						onChange={handleChange}
+					<DatePickerInput
+						label="次回更新日"
+						placeholder="日付を選択"
+						value={values.nextRenewalDate || null}
+						onChange={(v) => setField("nextRenewalDate", v ?? "")}
+						valueFormat="YYYY-MM-DD"
 						required
 					/>
-					<p className={styles.fieldHint}>
-						※ 現在この設定は保存のみで、メール通知の送信機能は開発中です
-					</p>
-				</div>
 
-				<div className={styles.fieldInline}>
-					<input
-						id={isActiveId}
-						name="isActive"
-						type="checkbox"
+					<Select
+						label="カテゴリ"
+						placeholder="選択してください"
+						data={categories.map((c) => ({
+							value: String(c.id),
+							label: c.name,
+						}))}
+						value={values.categoryId || null}
+						onChange={(v) => setField("categoryId", v ?? "")}
+						clearable
+					/>
+
+					<NumberInput
+						label="更新通知（日前）"
+						description="※ 現在この設定は保存のみで、メール通知の送信機能は開発中です"
+						min={0}
+						max={30}
+						value={
+							values.notifyBefore === "" ? "" : Number(values.notifyBefore)
+						}
+						onChange={(v) =>
+							setField("notifyBefore", v === "" ? "" : String(v))
+						}
+						required
+					/>
+
+					<Checkbox
+						label="有効"
 						checked={values.isActive}
-						onChange={handleChange}
+						onChange={(e) => setField("isActive", e.currentTarget.checked)}
 					/>
-					<label htmlFor={isActiveId}>有効</label>
-				</div>
 
-				<div className={styles.actions}>
-					<button
-						type="button"
-						onClick={() => navigate("/")}
-						disabled={submitting}
-					>
-						キャンセル
-					</button>
-					<button type="submit" disabled={submitting}>
-						{submitting ? "保存中..." : isEdit ? "更新する" : "登録する"}
-					</button>
-				</div>
+					<Group justify="flex-end">
+						<Button
+							variant="default"
+							onClick={() => navigate("/")}
+							disabled={submitting}
+						>
+							キャンセル
+						</Button>
+						<Button type="submit" loading={submitting}>
+							{isEdit ? "更新する" : "登録する"}
+						</Button>
+					</Group>
+				</Stack>
 			</form>
-		</div>
+		</Container>
 	);
 }
