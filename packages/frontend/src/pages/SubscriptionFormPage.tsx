@@ -46,7 +46,10 @@ const defaultValues: FormValues = {
 const billingCycleOptions = [
 	{ value: "monthly", label: "月額" },
 	{ value: "yearly", label: "年額" },
-];
+] satisfies { value: BillingCycle; label: string }[];
+
+const isBillingCycle = (value: string | null): value is BillingCycle =>
+	billingCycleOptions.some((option) => option.value === value);
 
 export function SubscriptionFormPage() {
 	const { id } = useParams<{ id: string }>();
@@ -196,7 +199,7 @@ export function SubscriptionFormPage() {
 						data={billingCycleOptions}
 						value={values.billingCycle}
 						onChange={(v) => {
-							if (v) setField("billingCycle", v as BillingCycle);
+							if (isBillingCycle(v)) setField("billingCycle", v);
 						}}
 						allowDeselect={false}
 						required
