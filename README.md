@@ -138,7 +138,7 @@ exchange_rates }o--|| currencies : "対象通貨"
 
 | カテゴリ | 技術 |
 | --- | --- |
-| フロントエンド | React + TypeScript + Vite |
+| フロントエンド | React + TypeScript + Vite + Mantine |
 | バックエンド | Fastify + TypeScript |
 | データベース | PostgreSQL / Prisma ORM |
 | デプロイ | フロントエンド: AWS S3 + CloudFront / バックエンド・DB: Render |
