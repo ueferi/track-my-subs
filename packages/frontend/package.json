@@ -27,10 +27,8 @@
 		"shared": "workspace:*"
 	},
 	"devDependencies": {
-		"@types/node": "^24.9.1",
 		"@types/react": "^19.2.2",
 		"@types/react-dom": "^19.2.2",
-		"@types/react-router-dom": "^5.3.3",
 		"@vitejs/plugin-react": "^5.1.0",
 		"postcss": "^8.5.27",
 		"postcss-preset-mantine": "^1.18.0",
