@@ -54,7 +54,7 @@ CloudFront の Custom Error Responses に以下2件を追加する。
 
 キャッシュ削除の反映後、ブラウザのキャッシュを避けて確認する。
 
-確認に使うパスは、フロントエンドの実在ルート（`packages/frontend/src/App.tsx`）に合わせる。存在しないパスはアプリ側の catch-all で `/` にリダイレクトされるため、フォールバックの検証にはゲストでも画面が出る `/login`・`/register` が分かりやすい。
+確認に使うパスは、フロントエンドの実在ルート（`packages/frontend/src/App.tsx`）に合わせる。
 
 - [ ] `/login` に直アクセス・リロードでログイン画面が表示される
 - [ ] `/register` に直アクセス・リロードで登録画面が表示される
