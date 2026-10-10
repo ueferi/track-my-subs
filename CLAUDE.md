@@ -8,10 +8,10 @@
 
 ### モノレポ構成（pnpm workspace）
 
-- **フロントエンド**: React + TypeScript + Vite (`packages/frontend`)
+- **フロントエンド**: React + TypeScript + Vite + Mantine (`packages/frontend`)
 - **バックエンド**: Fastify + TypeScript (`packages/backend`)
 - **共有型定義**: TypeScript (`packages/shared`)
-- **データベース**: PostgreSQL
+- **データベース**: PostgreSQL / Prisma ORM（ローカル開発は Docker Compose で起動）
 - **パッケージマネージャ**: pnpm
 - **Lint/Format**: Biome
 - **デプロイ**:
@@ -60,7 +60,8 @@ track-my-subs/
 
 - ルートハンドラは`async/await`を使用
 - エラーハンドリングは統一された形式で
-- リクエスト/レスポンスのスキーマ定義を活用
+- リクエスト/レスポンスの型は`packages/shared`の型をジェネリクスで指定する（例: `FastifyRequest<{ Body: RegisterRequest }>`）
+- 入力値の検証はハンドラ内で行い、`errorResponse`で統一した形式を返す
 - 環境変数は適切に型付けして使用
 
 ### データベース
@@ -90,7 +91,7 @@ PR → main にマージ
 ```
 
 **環境ごとのデータベース:**
-- **開発**: ローカルPostgreSQL（Docker推奨）
+- **開発**: ローカルPostgreSQL（リポジトリ同梱の `docker-compose.yml` で起動 / `postgres:16`）
 - **デプロイ環境**: Render PostgreSQL
 
 **将来方針（未実装）**: ステージング環境と本番環境を分離する。分離後は両者のデータベースを完全分離し、本番データは絶対にステージングで使用しない。
@@ -133,14 +134,13 @@ git push origin v1.0.0
 
 ### 新規コンポーネント追加
 
-1. `packages/frontend/src/components`に`.tsx`ファイルを作成
+1. 画面単位のコンポーネントは`packages/frontend/src/pages`に`.tsx`ファイルを作成（共通化が必要になった時点で`src/components`を新設する）
 2. propsの型をインターフェースで定義
-3. スタイルは適切な方法で実装（CSS Modules、Tailwind等）
-4. 必要に応じてストーリーブックやテストを追加
+3. スタイルはMantineのコンポーネントとpropsで表現する
 
 ### データベーススキーマ変更
 
-1. マイグレーションファイルを作成
+1. `packages/backend/prisma/schema.prisma`を変更し、`pnpm --filter backend db:migrate`でマイグレーションを生成
 2. `doc/er-diagram.md`を更新
 3. 影響を受ける型定義を`packages/shared`で更新
 4. バックエンドのクエリを修正
