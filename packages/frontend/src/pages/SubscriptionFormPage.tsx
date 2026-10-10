@@ -12,6 +12,15 @@ import {
 	Title,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
+import {
+	MAX_NAME_LENGTH,
+	MAX_NOTIFY_BEFORE,
+	MAX_PRICE,
+	MIN_NOTIFY_BEFORE,
+	validateName,
+	validateNotifyBefore,
+	validatePrice,
+} from "@shared/validation/subscription.js";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { BillingCycle, Category, Currency } from "shared";
@@ -43,6 +52,19 @@ const defaultValues: FormValues = {
 	categoryId: "",
 };
 
+type FieldErrors = Record<
+	"name" | "price" | "notifyBefore" | "startDate" | "nextRenewalDate",
+	string | null
+>;
+
+const noFieldErrors: FieldErrors = {
+	name: null,
+	price: null,
+	notifyBefore: null,
+	startDate: null,
+	nextRenewalDate: null,
+};
+
 const billingCycleOptions = [
 	{ value: "monthly", label: "月額" },
 	{ value: "yearly", label: "年額" },
@@ -61,6 +83,7 @@ export function SubscriptionFormPage() {
 	const [currencies, setCurrencies] = useState<Currency[]>([]);
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [fieldErrors, setFieldErrors] = useState<FieldErrors>(noFieldErrors);
 	const [loading, setLoading] = useState(isEdit);
 
 	useEffect(() => {
@@ -109,10 +132,27 @@ export function SubscriptionFormPage() {
 		value: FormValues[K],
 	) => {
 		setValues((prev) => ({ ...prev, [key]: value }));
+		if (key in noFieldErrors) {
+			setFieldErrors((prev) => ({ ...prev, [key]: null }));
+		}
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+
+		const errors: FieldErrors = {
+			name: validateName(values.name),
+			price: validatePrice(values.price),
+			notifyBefore: validateNotifyBefore(
+				values.notifyBefore === "" ? undefined : Number(values.notifyBefore),
+			),
+			startDate: values.startDate === "" ? "開始日を選択してください" : null,
+			nextRenewalDate:
+				values.nextRenewalDate === "" ? "次回更新日を選択してください" : null,
+		};
+		setFieldErrors(errors);
+		if (Object.values(errors).some((message) => message !== null)) return;
+
 		setSubmitting(true);
 		setError(null);
 
@@ -171,14 +211,20 @@ export function SubscriptionFormPage() {
 						label="サービス名"
 						value={values.name}
 						onChange={(e) => setField("name", e.currentTarget.value)}
+						maxLength={MAX_NAME_LENGTH}
+						error={fieldErrors.name}
 						required
 					/>
 
-					<TextInput
+					<NumberInput
 						label="金額"
-						inputMode="decimal"
 						value={values.price}
-						onChange={(e) => setField("price", e.currentTarget.value)}
+						onChange={(v) => setField("price", String(v))}
+						min={0}
+						max={MAX_PRICE}
+						allowNegative={false}
+						decimalScale={2}
+						error={fieldErrors.price}
 						required
 					/>
 
@@ -210,6 +256,7 @@ export function SubscriptionFormPage() {
 						placeholder="日付を選択"
 						value={values.startDate || null}
 						onChange={(v) => setField("startDate", v ?? "")}
+						error={fieldErrors.startDate}
 						valueFormat="YYYY-MM-DD"
 						required
 					/>
@@ -219,6 +266,7 @@ export function SubscriptionFormPage() {
 						placeholder="日付を選択"
 						value={values.nextRenewalDate || null}
 						onChange={(v) => setField("nextRenewalDate", v ?? "")}
+						error={fieldErrors.nextRenewalDate}
 						valueFormat="YYYY-MM-DD"
 						required
 					/>
@@ -238,8 +286,10 @@ export function SubscriptionFormPage() {
 					<NumberInput
 						label="更新通知（日前）"
 						description="※ 現在この設定は保存のみで、メール通知の送信機能は開発中です"
-						min={0}
-						max={30}
+						min={MIN_NOTIFY_BEFORE}
+						max={MAX_NOTIFY_BEFORE}
+						allowDecimal={false}
+						error={fieldErrors.notifyBefore}
 						value={
 							values.notifyBefore === "" ? "" : Number(values.notifyBefore)
 						}
