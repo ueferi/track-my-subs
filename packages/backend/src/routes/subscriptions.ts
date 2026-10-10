@@ -1,10 +1,11 @@
 import { Prisma } from "@prisma/client";
 import type { FastifyInstance, FastifyRequest } from "fastify";
-import type {
-	CreateSubscriptionRequest,
-	SubscriptionListData,
-	SubscriptionWithRelations,
-	UpdateSubscriptionRequest,
+import {
+	type CreateSubscriptionRequest,
+	type SubscriptionListData,
+	type SubscriptionWithRelations,
+	type UpdateSubscriptionRequest,
+	validateSubscriptionFields,
 } from "shared";
 import { prisma } from "../db.js";
 import { authenticate } from "../hooks/auth.js";
@@ -116,6 +117,11 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
 					.send(errorResponse("必須項目が不足しています"));
 			}
 
+			const validationError = validateSubscriptionFields(body);
+			if (validationError) {
+				return reply.status(400).send(errorResponse(validationError));
+			}
+
 			const subscription = await prisma.subscription.create({
 				data: {
 					userId,
@@ -151,6 +157,11 @@ export async function subscriptionRoutes(fastify: FastifyInstance) {
 			const { userId } = request.user;
 			const { id } = request.params;
 			const body = request.body;
+
+			const validationError = validateSubscriptionFields(body);
+			if (validationError) {
+				return reply.status(400).send(errorResponse(validationError));
+			}
 
 			const existing = await prisma.subscription.findFirst({
 				where: { id, userId },
