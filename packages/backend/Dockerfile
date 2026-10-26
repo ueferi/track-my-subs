@@ -1,4 +1,6 @@
-FROM node:22-alpine AS base
+# NOTE: Render のバックエンドデプロイでは未使用（Renderはネイティブ Node ランタイムでビルド・起動しており、
+# このDockerfileは参照していない）。将来Docker運用に切り替える場合やローカルでの動作確認用に維持している。
+FROM node:24.22.1-alpine AS base
 RUN npm install -g pnpm
 
 # 依存関係インストール
@@ -24,7 +26,7 @@ COPY packages/backend/tsconfig.json ./packages/backend/
 RUN pnpm --filter backend build
 
 # 本番イメージ
-FROM node:22-alpine AS runner
+FROM node:24.22.1-alpine AS runner
 RUN npm install -g pnpm
 WORKDIR /app
 

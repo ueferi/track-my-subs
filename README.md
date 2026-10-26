@@ -160,7 +160,7 @@ track-my-subs/
 
 ### 必要なもの
 
-- Node.js 22+
+- Node.js 24.22.1+（`.node-version` 参照。nvm や mise 等でのバージョン切り替えを推奨）
 - pnpm
 - Docker（PostgreSQL 用）
 
