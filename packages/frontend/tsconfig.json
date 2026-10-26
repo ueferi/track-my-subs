@@ -6,7 +6,10 @@
 		"module": "ESNext",
 		"moduleResolution": "bundler",
 		"outDir": "dist",
-		"types": ["vite/client"]
+		"types": ["vite/client"],
+		"paths": {
+			"@shared/*": ["../shared/src/*"]
+		}
 	},
 	"include": ["src"],
 	"references": [{ "path": "../shared" }]
