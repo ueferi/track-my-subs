@@ -31,19 +31,14 @@
 flowchart LR
   User["ユーザー（ブラウザ）"]
 
-  subgraph AWS["AWS"]
-    CloudFront["CloudFront"]
-    S3["S3（静的ファイル）"]
-    CloudFront --> S3
-  end
-
-  subgraph Render["Render"]
-    Backend["Fastify API"]
-    DB[("PostgreSQL")]
+  subgraph Local["ローカル開発環境"]
+    Frontend["Vite 開発サーバー（localhost:5173）"]
+    Backend["Fastify API（localhost:3000）"]
+    DB[("PostgreSQL（Docker Compose）")]
     Backend --> DB
   end
 
-  User -->|画面表示| CloudFront
+  User -->|画面表示| Frontend
   User -->|APIリクエスト（JWT）| Backend
 ```
 
@@ -131,7 +126,6 @@ exchange_rates }o--|| currencies : "対象通貨"
 | フロントエンド | React + TypeScript + Vite + Mantine |
 | バックエンド | Fastify + TypeScript |
 | データベース | PostgreSQL / Prisma ORM |
-| デプロイ | フロントエンド: AWS S3 + CloudFront / バックエンド・DB: Render |
 
 ### モノレポ構成
 

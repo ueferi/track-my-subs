@@ -11,14 +11,9 @@
 - **フロントエンド**: React + TypeScript + Vite + Mantine (`packages/frontend`)
 - **バックエンド**: Fastify + TypeScript (`packages/backend`)
 - **共有型定義**: TypeScript (`packages/shared`)
-- **データベース**: PostgreSQL / Prisma ORM（ローカル開発は Docker Compose で起動）
+- **データベース**: PostgreSQL / Prisma ORM（ローカル開発はリポジトリ同梱の `docker-compose.yml` で起動 / `postgres:16`）
 - **パッケージマネージャ**: pnpm
 - **Lint/Format**: Biome
-- **デプロイ**:
-  - フロントエンド: AWS S3 + CloudFront（mainブランチへのマージで自動デプロイ / GitHub Actions）
-  - バックエンド: Render Web Service（mainブランチから自動デプロイ）
-  - データベース: Render PostgreSQL
-  - 現状はデプロイ先が単一環境のみ。ステージング環境と本番環境の分離、およびGitタグ（`v*.*.*`）をトリガーとした本番デプロイは**未実装**（将来方針）
 
 ## ディレクトリ構造
 
@@ -75,26 +70,8 @@ track-my-subs/
 
 シンプルで小規模開発に適したGitHub Flowを採用。
 
-- **`main`**: 常にデプロイ可能な状態を保つブランチ（マージするとデプロイ環境に反映される）
-- **`issue_{番号}`**: 各issueに対応する作業ブランチ
-
-### 環境戦略
-
-```
-開発環境（ローカル）
-    ↓
-issue_* ブランチで実装
-    ↓
-PR → main にマージ
-    ↓
-デプロイ環境（フロントエンド: AWS / バックエンド・DB: Render）← mainブランチ
-```
-
-**環境ごとのデータベース:**
-- **開発**: ローカルPostgreSQL（リポジトリ同梱の `docker-compose.yml` で起動 / `postgres:16`）
-- **デプロイ環境**: Render PostgreSQL
-
-**将来方針（未実装）**: ステージング環境と本番環境を分離する。分離後は両者のデータベースを完全分離し、本番データは絶対にステージングで使用しない。
+- **`main`**: 常に動作する状態を保つブランチ
+- **`<type>/issue<番号>-<内容>`**: 各issueに対応する作業ブランチ。`<type>`はコミット規約のプレフィックスに合わせる（例: `chore/issue81-upgrade-node-to-24`）
 
 ### コミット規約
 
@@ -104,24 +81,10 @@ PR → main にマージ
 ### 作業フロー
 
 1. issueを作成
-2. `issue_{番号}`ブランチを作成
+2. `<type>/issue<番号>-<内容>`ブランチを作成
 3. 実装・テスト（ローカル環境）
 4. Biomeでlint/format確認: `pnpm lint`
 5. PRを作成してmainにマージ
-6. mainへのマージでデプロイ環境に自動デプロイ
-7. デプロイ環境で動作確認
-
-### リリースフロー（未実装 / 将来方針）
-
-Gitタグによるリリース運用は現時点では導入していない。将来ステージング環境と本番環境を分離した際は、以下の運用を想定している。
-
-```bash
-# ステージングで検証完了後
-git tag v1.0.0
-git push origin v1.0.0
-
-# タグのpushをトリガーに本番環境へ自動デプロイ
-```
 
 ## よくある作業パターン
 

@@ -1,5 +1,4 @@
-# NOTE: Render のバックエンドデプロイでは未使用（Renderはネイティブ Node ランタイムでビルド・起動しており、
-# このDockerfileは参照していない）。将来Docker運用に切り替える場合やローカルでの動作確認用に維持している。
+# NOTE: 現在このDockerfileを参照するデプロイ設定はない。ローカルでコンテナとしての動作を確認するために維持している。
 FROM node:24.22.1-alpine AS base
 RUN npm install -g pnpm
 
